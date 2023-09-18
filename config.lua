@@ -1,6 +1,6 @@
 config = {}
 
-config.esx = false                        -- Set this to true if using ESX (requires esx_identity)
+config.esx = true                        -- Set this to true if using ESX (requires esx_identity)
 
 config.qbcore = false                     -- Set this to true if using QBCore
 
@@ -21,6 +21,7 @@ config.emoji = {
     ad = true, --  enable emojis for /ad
     twt = true, --  enable emojis for /twt
     anon = true, --  enable emojis for /anon
+    police = false, -- enable emojis for job announce /police
 }
 
 function import(file) -- require doesnt work without ox_lib so we need to use this to keep this standalone
