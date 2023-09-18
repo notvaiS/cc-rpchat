@@ -7,11 +7,12 @@ version '1.4.2'
 
 lua54 'yes'
 
-server_script 'server/*.lua'
-client_script 'client/*.lua'
 shared_scripts {
-    --'@ox_lib/init.lua',
+    '@ox_lib/init.lua', --comment if u are not using ox_lib and i u changed the notify
     'config.lua',
 }
+server_script 'server/*.lua'
+client_script 'client/*.lua'
+
 
 dependency 'cc-chat'
