@@ -308,6 +308,41 @@ RegisterCommand('anon', function(source, args, rawCommand)
     TriggerClientEvent('cc-rpchat:addMessage', -1, '#2c3e50', 'fa-solid fa-mask', 'Anonymous | '.. source, msg)
 end, false)
 
+-- Job announces (Locked by job, tested on esx legacy 1.10.1)
+RegisterCommand('police', function(source, args, rawCommand) -- Here u can change the command name.
+    local playerName
+    local msg = rawCommand:sub(7) -- Number of characters of the command adding 1 (ex: police -- 6 characters, you set 7) if u change the command name, u need to change this too!
+    if config.emoji.police then -- Remember to add in config
+        for _, em in ipairs(emoji) do
+            for _, code in ipairs(em[1]) do
+                local emojiCode = string.gsub(code, "([%^%$%(%)%%%.%[%]%*%+%-%?])", "%%%1") -- Escape special characters in the emoji code
+                msg = string.gsub(msg, emojiCode, em[2]) -- Replace the emoji code with the corresponding emoji character
+            end
+        end
+    end
+    if config.discord then
+        playerName = "["..exports.ccDiscordWrapper:getPlayerDiscordHighestRole(source, "name").."] "..GetPlayerName(source)
+    elseif config.esx then
+        local xPlayer = ESX.GetPlayerFromId(source)
+        playerName = xPlayer.getName()
+    elseif config.qbcore then
+        local xPlayer = QBCore.Functions.GetPlayer(source)
+        playerName = xPlayer.PlayerData.charinfo.firstname .. "," .. xPlayer.PlayerData.charinfo.lastname 
+    else
+        playerName = GetPlayerName(source)
+    end
+    if config.DiscordWebhook then
+        sendToDiscord(16753920, playerName.." has executed /"..rawCommand:sub(1, 7), '**Command arguments**: '..msg..'\n\n'.."**Identifiers**: \n"..GetPlayerIdentifier(source, 0).."\n"..GetPlayerIdentifier(source, 1).."\n<@"..GetPlayerIdentifier(source, 2):sub(9)..">\n"..GetPlayerIdentifier(source, 3), 'add a custom footer') -- if u change the command name, u need to change this too!
+    end
+    local xPlayer = ESX.GetPlayerFromId(source) -- qb-core | replace by: xPlayer = QBCore.Functions.GetPlayer(source)
+    if xPlayer.job.name == 'police' then -- qb-core | replace by: if xPlayer.PlayerData.job.name == "police" then
+        TriggerClientEvent('cc-rpchat:addMessage', -1, '#287233', 'fa-solid fa-building-shield', 'POLICE |', msg)
+        -- If u want to display in game name of the job announcer put replace above by this
+            -- TriggerClientEvent('cc-rpchat:addMessage', -1, '#287233', 'fa-solid fa-building-shield', 'POLICE | ' ..playerName, msg)
+    else
+        TriggerClientEvent('ox_lib:notify', source, { title = 'CHAT', description = 'You do not have the proper job to use this command', icon = 'comment', type = 'error'}) --You can change your notification
+    end
+end, false)
 -- Player join and leave messages
 if config.connectionMessages then
     AddEventHandler('playerJoining', function()
